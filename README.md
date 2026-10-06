@@ -1,2 +1,2 @@
-"# RAG-Service 2"
+"# RAG-Service"
 
