@@ -5,6 +5,7 @@ networks:
 
 services:
   app:
+    image: ghcr.io/alexbykovchenko/rag-service:latest
     build: .
     container_name: rag-app
     ports:
