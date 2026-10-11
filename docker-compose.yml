@@ -1,0 +1,31 @@
+networks:
+  mentoring-net:
+    name: mentoring-net
+    external: false
+
+services:
+  app:
+    build: .
+    container_name: rag-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    networks:
+      - mentoring-net
+    depends_on:
+      - qdrant
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.0
+    container_name: qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./qdrant_data:/qdrant/storage
+    networks:
+      - mentoring-net
+    restart: unless-stopped
