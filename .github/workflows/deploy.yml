@@ -1,0 +1,47 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: pytest tests/ -v
+        env:
+          # Только секрет. Остальное (base URL, model, top_k, эмбеддер) —
+          # дефолты из app/config.py, общие для CI / локали / прода.
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          QDRANT_URL: http://localhost:6333
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # ... существующие шаги build + push в GHCR из недели 6
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/mentoring/rag-service
+            # Только секреты. Имя модели, base URL, top_k и т.д.
+            # — дефолты из app/config.py.
+            cat > .env << 'EOF'
+            LLM_API_KEY=${{ secrets.LLM_API_KEY }}
+            QDRANT_URL=http://qdrant:6333
+            EOF
+            docker compose pull app
+            docker compose up -d app

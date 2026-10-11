@@ -1,3 +1,6 @@
 qdrant_data/
 .env
 data/corpus_chunks.jsonl
+__pycache__/
+*.pyc
+.pytest_cache/
