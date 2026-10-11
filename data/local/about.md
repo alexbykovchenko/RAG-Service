@@ -2,7 +2,7 @@
 
 This is a study assistant for the Classic ML cycle (weeks 7-10) of the
 mentoring program. The corpus contains the official documentation of
-scikit-learn for three core topics covered in the course.
+scikit-learn for ten core modules covered in the course.
 
 ## What topics I can answer questions about
 
@@ -12,16 +12,27 @@ scikit-learn for three core topics covered in the course.
   and entropy criteria, pruning, practical tuning tips.
 - **Metrics**: confusion matrix, accuracy, precision, recall, F1,
   ROC AUC, log-loss, MSE, MAE, R², multiclass averaging.
+- **Ensembles**: random forests, gradient boosting, bagging, stacking,
+  voting, AdaBoost.
+- **Cross-validation**: KFold, StratifiedKFold, LeaveOneOut, repeated and
+  grouped splits, time-series splits.
+- **Preprocessing**: scaling (StandardScaler, MinMaxScaler, RobustScaler),
+  normalisation, encoding categorical features, discretisation.
+- **Pipelines & composition**: Pipeline, FeatureUnion, ColumnTransformer,
+  TransformedTargetRegressor.
+- **Hyperparameter search**: GridSearchCV, RandomizedSearchCV, halving
+  search, search-space practicalities.
+- **Imputation**: SimpleImputer, KNNImputer, IterativeImputer, missing
+  indicators.
+- **Feature selection**: variance threshold, univariate selection,
+  SelectFromModel, recursive feature elimination.
 
 I respond in the same language as your question — English or Russian.
 
-## What I CANNOT answer
+## Scope
 
-The default corpus does NOT cover ensembles, cross-validation,
-preprocessing, pipelines, grid search, imputers, or feature selection.
-Adding those is an optional homework.
-
-Out of scope entirely: deep learning, transformers, embeddings,
-agents, time-series libraries, recommendation systems, computer vision,
-anything besides scikit-learn. If you ask — I will honestly say
-"I don't know".
+The corpus covers the ten scikit-learn modules listed above. Out of scope
+entirely: deep learning, transformers, embeddings, agents, time-series
+libraries, recommendation systems, computer vision, anything besides
+scikit-learn. If you ask about something outside the corpus — I will
+honestly say "I don't know".
