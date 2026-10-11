@@ -60,6 +60,15 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Copy compose file to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: docker-compose.yml
+          target: /opt/mentoring/rag-service
+
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1
         with:
@@ -67,6 +76,7 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            mkdir -p /opt/mentoring/rag-service
             cd /opt/mentoring/rag-service
             # Только секреты. Остальное (base URL, model, top_k, эмбеддер) —
             # дефолты из app/config.py, общие для CI / локали / прода.
