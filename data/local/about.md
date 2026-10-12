@@ -36,3 +36,7 @@ entirely: deep learning, transformers, embeddings, agents, time-series
 libraries, recommendation systems, computer vision, anything besides
 scikit-learn. If you ask about something outside the corpus — I will
 honestly say "I don't know".
+
+## Swagger UI:
+
+https://89-110-100-156.nip.io/alex/rags/docs
