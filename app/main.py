@@ -1,3 +1,4 @@
+import os
 import time
 from contextlib import asynccontextmanager
 
@@ -9,6 +10,10 @@ from app.schemas.chat import ChatRequest, ChatResponse, Source
 
 _chain = None
 _retriever = None
+
+# Префикс пути, под которым сервис отдаётся через reverse-proxy (напр. /alex/rags).
+# Пусто по умолчанию — локально сервис на корне.
+ROOT_PATH = os.getenv("ROOT_PATH", "")
 
 # LaTeX delimiters для Gradio Chatbot. LLM-ответы про Ridge, Lasso, метрики
 # содержат формулы $$..$$ / \[..\] / $..$ — без этого блока они отрисуются
@@ -31,7 +36,7 @@ async def lifespan(app: FastAPI):
     _retriever = None
 
 
-app = FastAPI(title="RAG service", lifespan=lifespan)
+app = FastAPI(title="RAG service", lifespan=lifespan, root_path=ROOT_PATH)
 
 
 @app.get("/health")
@@ -209,4 +214,6 @@ with gr.Blocks(
     send.click(respond, [msg, chatbot], [chatbot, msg, timings_md, sources_md])
 
 
-app = gr.mount_gradio_app(app, demo, path="/", theme=gr.themes.Soft(), css=CSS)
+app = gr.mount_gradio_app(
+    app, demo, path="/", root_path=ROOT_PATH, theme=gr.themes.Soft(), css=CSS
+)

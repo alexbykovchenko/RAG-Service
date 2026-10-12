@@ -84,6 +84,7 @@ jobs:
             cat > .env << 'EOF'
             LLM_API_KEY=${{ secrets.LLM_API_KEY }}
             QDRANT_URL=http://qdrant:6333
+            ROOT_PATH=/alex/rags
             EOF
             docker compose pull app
             docker compose up -d app
