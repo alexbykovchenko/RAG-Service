@@ -88,3 +88,7 @@ jobs:
             EOF
             docker compose pull app
             docker compose up -d app
+            # Reclaim disk: каждый деплой тянет ~3GB образ, старые SHA-теги
+            # становятся dangling и сами не удаляются. -f удаляет только
+            # dangling (untagged) образы и не трогает запущенные контейнеры.
+            docker image prune -f

@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Run tests
+        env:
+          # Тесты герметичны (LLM и Qdrant замоканы); ключ нужен только
+          # для импорта app.config, значение роли не играет.
+          LLM_API_KEY: ci-dummy-key
+          QDRANT_URL: http://localhost:6333
+          ENABLE_WEB_SEARCH: "false"
+        run: pytest -v

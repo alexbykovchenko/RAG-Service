@@ -13,8 +13,11 @@ class Settings(BaseSettings):
 
     # LLM provider. Дефолты для OpenRouter; override через .env при смене провайдера.
     llm_base_url: str = "https://openrouter.ai/api/v1"
-    llm_model: str = "meta-llama/llama-3.3-70b-instruct"
+    llm_model: str = "deepseek/deepseek-chat"
     llm_temperature: float = 0.0
+    # Ограничиваем зависшие вызовы провайдера, чтобы /chat и /agent не висели.
+    llm_timeout: float = 60.0
+    llm_max_retries: int = 2
 
     # Vector store
     qdrant_url: str = "http://qdrant:6333"
@@ -26,5 +29,10 @@ class Settings(BaseSettings):
     embedding_dim: int = 384
     normalize_embeddings: bool = True
 
+    # agent (этой недели)
+    max_iterations: int = 5
+    agent_temperature: float = 0.0
+    enable_web_search: bool = True
+    agent_max_output_chars: int = 2000
 
 settings = Settings()
