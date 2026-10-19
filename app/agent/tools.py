@@ -4,6 +4,38 @@ from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_experimental.tools.python.tool import PythonREPLTool
 from app.config import settings
 
+import ast
+
+
+def _print_last_expression(code: str) -> str:
+    """Wrap the final bare expression in print(...) so its value is returned.
+
+    PythonREPLTool captures stdout only; ``x = 1 + 1`` (or a trailing ``x``)
+    would otherwise return an empty string and leave the agent guessing.
+    """
+    try:
+        tree = ast.parse(code)
+    except SyntaxError:
+        return code
+    if not tree.body or not isinstance(tree.body[-1], ast.Expr):
+        return code
+    last_expr = tree.body[-1].value
+    if (
+        isinstance(last_expr, ast.Call)
+        and isinstance(last_expr.func, ast.Name)
+        and last_expr.func.id == "print"
+    ):
+        return code
+    tree.body[-1] = ast.Expr(
+        value=ast.Call(
+            func=ast.Name(id="print", ctx=ast.Load()),
+            args=[last_expr],
+            keywords=[],
+        )
+    )
+    ast.fix_missing_locations(tree)
+    return ast.unparse(tree)
+
 _python_repl = PythonREPLTool()
 _ddg_search = DuckDuckGoSearchRun()
 
@@ -45,10 +77,11 @@ def documentation_search(query: str) -> str:
 
 @tool
 def python_repl(code: str) -> str:
-    """Execute Python code and return the printed output.
+    """Execute Python code and return the output.
 
     Use this tool for arithmetic, computing formulas, or transforming data.
-    The code runs in a sandboxed REPL; use `print()` to surface results.
+    The value of the last expression is printed automatically, so an explicit
+    `print()` is optional.
 
     Args:
         code: Python source code to execute.
@@ -56,7 +89,7 @@ def python_repl(code: str) -> str:
     Returns:
         Stdout of the executed code, or error message.
     """
-    return _python_repl.run(code)
+    return _python_repl.run(_print_last_expression(code))
 
 
 @tool
